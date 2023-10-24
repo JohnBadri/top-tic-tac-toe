@@ -68,6 +68,7 @@ function handleCellClick(event) {
   const target = event.target;
   const cellId = target.getAttribute("id");
   const cellElement = document.getElementById(cellId);
+  let placementCount = john.getMarkingCount() + computerAI.getMarkingCount();
   if (target.classList.contains("box") && !target.classList.contains("value")) {
     const currentPlayer =
       john.getMarkingCount() === computerAI.getMarkingCount() ? "John" : "AI";
@@ -75,11 +76,11 @@ function handleCellClick(event) {
     addMarkingToCell(cellElement, currentPlayer);
     myBoard.setCell(cellId, currentPlayer === "John" ? "✗" : "O");
     updateMarkingCount(playerObj);
-    if (john.getMarkingCount() + computerAI.getMarkingCount() > 4) {
-      if (win()) {
-        const winner = currentPlayer === "John" ? john : computerAI;
-        endGame(winner);
-      }
+    if (win()) {
+      const winner = currentPlayer === "John" ? john : computerAI;
+      endGame(winner);
+    } else if (placementCount == 8 && !win()) {
+      drawGame();
     }
     target.classList.add("value");
   }
@@ -97,5 +98,12 @@ function endGame(winner) {
   const ticDiv = document.querySelector(".tic-tac-toe");
   ticDiv.appendChild(div).classList.add("result");
   div.textContent = `The winner is ${winner.name}!`;
-  console.log("Game has ended");
+}
+
+function drawGame() {
+  tbody.removeEventListener("click", handleCellClick);
+  const div = document.createElement("div");
+  const ticDiv = document.querySelector(".tic-tac-toe");
+  ticDiv.appendChild(div).classList.add("result");
+  div.textContent = `The game is a Draw!`;
 }
