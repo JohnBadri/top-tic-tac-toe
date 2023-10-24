@@ -77,7 +77,8 @@ function handleCellClick(event) {
     myBoard.setCell(cellId, currentPlayer === "John" ? "✗" : "O");
     updateMarkingCount(playerObj);
     if (win()) {
-      const winner = currentPlayer === "John" ? john : computerAI;
+      const winner =
+        currentPlayer === "John" ? "You, (/•-•)/" : "Computer AI, └[`ヮ´]┘";
       endGame(winner);
     } else if (placementCount == 8 && !win()) {
       drawGame();
@@ -97,7 +98,7 @@ function endGame(winner) {
   const div = document.createElement("div");
   const ticDiv = document.querySelector(".tic-tac-toe");
   ticDiv.appendChild(div).classList.add("result");
-  div.textContent = `The winner is ${winner.name}!`;
+  div.textContent = `The winner is ${winner} !`;
 }
 
 function drawGame() {
