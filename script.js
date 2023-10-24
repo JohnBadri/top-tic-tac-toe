@@ -78,7 +78,7 @@ function handleCellClick(event) {
     updateMarkingCount(playerObj);
     if (win()) {
       const winner =
-        currentPlayer === "John" ? "You, (/•-•)/" : "Computer AI, └[`ヮ´]┘";
+        currentPlayer === "John" ? "You (/•-•)/" : "Computer AI └[`ヮ´]┘";
       endGame(winner);
     } else if (placementCount == 8 && !win()) {
       drawGame();
@@ -93,11 +93,25 @@ const computerAI = createPlayer("AI, O");
 const tbody = document.querySelector("tbody");
 tbody.addEventListener("click", handleCellClick);
 
+const tableGame = document.querySelector("table");
+const startButton = document.querySelector(".start-game");
+const restartButton = document.querySelector(".restart-game");
+startButton.addEventListener("click", function (e) {
+  tableGame.style.display = "block";
+  startButton.style.display = "none";
+  restartButton.style.display = "block";
+});
+
+restartButton.addEventListener("click", function (e) {
+  location.reload();
+});
+
 function endGame(winner) {
   tbody.removeEventListener("click", handleCellClick);
   const div = document.createElement("div");
   const ticDiv = document.querySelector(".tic-tac-toe");
-  ticDiv.appendChild(div).classList.add("result");
+  const lastChild = ticDiv.lastElementChild;
+  ticDiv.insertBefore(div, lastChild).classList.add("result");
   div.textContent = `The winner is ${winner} !`;
 }
 
@@ -105,6 +119,7 @@ function drawGame() {
   tbody.removeEventListener("click", handleCellClick);
   const div = document.createElement("div");
   const ticDiv = document.querySelector(".tic-tac-toe");
-  ticDiv.appendChild(div).classList.add("result");
+  const lastChild = ticDiv.lastElementChild;
+  ticDiv.insertBefore(div, lastChild).classList.add("result");
   div.textContent = `The game is a Draw!`;
 }
