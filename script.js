@@ -17,19 +17,47 @@ const myBoard = (function gameBoard() {
   };
 })();
 
-function createPlayer(name) {
+function win() {
+  const scenario = myBoard.getBoard();
+  let decideWin = false;
+
+  const winScenario = [
+    [scenario[0], scenario[1], scenario[2]],
+    [scenario[3], scenario[4], scenario[5]],
+    [scenario[6], scenario[7], scenario[8]],
+    [scenario[0], scenario[3], scenario[6]],
+    [scenario[1], scenario[4], scenario[7]],
+    [scenario[2], scenario[5], scenario[8]],
+    [scenario[0], scenario[4], scenario[8]],
+    [scenario[2], scenario[4], scenario[6]],
+  ];
+
+  winScenario.forEach((innerArray) => {
+    if (innerArray[0] !== "") {
+      const isWin = innerArray.every((element) => element === innerArray[0]);
+      if (isWin) {
+        decideWin = true;
+      }
+    }
+  });
+
+  return decideWin;
+}
+
+function createPlayer(name, marker) {
   let marking = 0;
   const getMarkingCount = () => marking;
   const addMarkingCount = () => marking++;
   return {
     name,
+    marker,
     getMarkingCount,
     addMarkingCount,
   };
 }
 
 function addMarkingToCell(cell, player) {
-  cell.textContent = player === "John" ? "X" : "O";
+  cell.textContent = player === "John" ? "✗" : "O";
 }
 
 function updateMarkingCount(playerObj) {
@@ -45,17 +73,29 @@ function handleCellClick(event) {
       john.getMarkingCount() === computerAI.getMarkingCount() ? "John" : "AI";
     const playerObj = currentPlayer === "John" ? john : computerAI;
     addMarkingToCell(cellElement, currentPlayer);
-    myBoard.setCell(cellId, currentPlayer === "John" ? "X" : "O");
+    myBoard.setCell(cellId, currentPlayer === "John" ? "✗" : "O");
     updateMarkingCount(playerObj);
-    console.log(
-      `Cell ID = ${cellId}, John count at ${john.getMarkingCount()} and AI count at ${computerAI.getMarkingCount()}`
-    );
+    if (john.getMarkingCount() + computerAI.getMarkingCount() > 4) {
+      if (win()) {
+        const winner = currentPlayer === "John" ? john : computerAI;
+        endGame(winner);
+      }
+    }
     target.classList.add("value");
   }
 }
 
-const john = createPlayer("John");
-const computerAI = createPlayer("AI");
+const john = createPlayer("John, ✗");
+const computerAI = createPlayer("AI, O");
 
 const tbody = document.querySelector("tbody");
 tbody.addEventListener("click", handleCellClick);
+
+function endGame(winner) {
+  tbody.removeEventListener("click", handleCellClick);
+  const div = document.createElement("div");
+  const ticDiv = document.querySelector(".tic-tac-toe");
+  ticDiv.appendChild(div).classList.add("result");
+  div.textContent = `The winner is ${winner.name}!`;
+  console.log("Game has ended");
+}
